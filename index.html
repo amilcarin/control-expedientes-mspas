@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verificación de Certificado</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      background:#f2f2f2;
+      color:#222;
+    }
+
+    /* HEADER MSPAS CENTRADO */
+    .header {
+      background: #69aee8;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    .header-logo{
+      width:100%;
+      max-width:420px;
+      height:auto;
+      object-fit:contain;
+    }
+
+    /* CONTENT */
+    .container{
+      max-width:900px;
+      margin:auto;
+      padding:30px 20px;
+    }
+
+    .title{
+      font-size:54px;
+      font-weight:bold;
+      margin-bottom:30px;
+    }
+
+    .info{
+      font-size:38px;
+      margin-bottom:25px;
+      line-height:1.4;
+    }
+
+    .info strong{
+      font-weight:800;
+    }
+
+    /* DOCUMENT VIEWER */
+    .viewer{
+      background:#ececec;
+      border-radius:5px;
+      padding:20px;
+      margin-top:20px;
+    }
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:20px;
+      border-bottom:1px solid #ddd;
+      padding-bottom:10px;
+    }
+
+    /* DISEÑO EXACTO: Botón de las tres líneas (Menú superior) */
+    .menu-btn{
+      width: 58px;
+      height: 48px;
+      background: #c8c8c8; 
+      border: 1px solid #969696; 
+      border-radius: 5px; 
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      padding: 0 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .menu-btn:hover{
+      background: #b8b8b8;
+    }
+
+    /* Líneas internas del icono superior */
+    .menu-line-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .menu-btn .line {
+      height: 3px;
+      background: #555;
+      flex-grow: 1;
+      border-radius: 1px;
+    }
+
+    .menu-btn .dot {
+      width: 3px;
+      height: 3px;
+      background: #555;
+      border-radius: 50%;
+    }
+
+    .zoom-controls{
+      margin:auto;
+      display:flex;
+      gap:8px;
+    }
+
+    .zoom-btn{
+      width:60px;
+      height:60px;
+      border:2px solid #8d7cc0;
+      background:white;
+      font-size:40px;
+      cursor:pointer;
+      border-radius:5px;
+      transition:.2s;
+    }
+
+    .zoom-btn:hover{
+      background:#f5f5f5;
+    }
+
+    /* CONTENEDOR PRINCIPAL DEL VISOR */
+    .document-wrapper{
+      display: flex;
+      gap: 15px;
+      overflow: auto;
+      padding: 20px 0;
+      align-items: flex-start;
+    }
+
+    /* PANEL IZQUIERDO */
+    .sidebar-left {
+      width: 0;
+      opacity: 0;
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      transition: width 0.3s ease, opacity 0.2s ease;
+    }
+
+    .sidebar-left.active {
+      width: 140px;
+      opacity: 1;
+    }
+
+    /* DISEÑO EXACTO: Botón de miniatura inferior */
+    .sidebar-icon-btn {
+      width: 44px;
+      height: 42px;
+      background: #c8c8c8; 
+      border: 1px solid #969696;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #444;
+    }
+
+    /* Recuadro de la miniatura */
+    .thumbnail-box {
+      background: #e4e4e4;
+      border: 1px solid #dcdcdc;
+      padding: 12px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .thumbnail-box img {
+      width: 100%;
+      height: auto;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      border: 1px solid #ccc;
+    }
+
+    /* PANEL DERECHO */
+    .main-viewer-panel {
+      flex-grow: 1;
+      overflow: auto;
+    }
+
+    .document{
+      background:white;
+      width:100%;
+      max-width:650px;
+      margin:auto;
+      padding:20px;
+      box-shadow:0 5px 15px rgba(0,0,0,.3);
+      border-radius:4px;
+      transition:transform .2s ease;
+    }
+
+    /* Mensaje de error si no existe el expediente */
+    .error-message {
+      color: #d32f2f;
+      font-weight: bold;
+      text-align: center;
+      padding: 20px;
+      font-size: 24px;
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:768px){
+      .title{ font-size:32px; }
+      .info{ font-size:24px; }
+      .header{ padding:14px 16px; }
+      .header-logo{ max-width:260px; }
+      .zoom-btn{ width:45px; height:45px; font-size:28px; }
+      .menu-btn { width: 50px; height: 40px; padding: 0 8px; }
+      .sidebar-left.active { width: 100px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <img src="logo.png" alt="MSPAS Logo" class="header-logo">
+  </div>
+
+  <div class="container">
+
+    <div class="title">
+      Verificación de Certificado
+    </div>
+
+    <div class="info">
+      <strong>Número de Expediente:</strong>
+      <span id="txtExpediente">Cargando...</span>
+    </div>
+
+    <div class="info">
+      <strong>Estado:</strong>
+      <span id="txtEstado">Cargando...</span>
+    </div>
+
+    <div class="viewer" id="mainViewer">
+
+      <div class="toolbar">
+        <div class="menu-btn" onclick="toggleSidebar()">
+          <div class="menu-line-container"><div class="line"></div><div class="dot"></div></div>
+          <div class="menu-line-container"><div class="line"></div><div class="dot"></div></div>
+          <div class="menu-line-container"><div class="line"></div><div class="dot"></div></div>
+        </div>
+        
+        <div class="zoom-controls">
+          <button class="zoom-btn" onclick="zoomOut()"></button>
+          <button class="zoom-btn" onclick="zoomIn()">+</button>
+        </div>
+      </div>
+
+      <div class="document-wrapper">
+        
+        <div class="sidebar-left" id="sidebarLeft">
+          <div class="sidebar-icon-btn"></div>
+          <div class="thumbnail-box">
+            <img src="" alt="Miniatura" id="imgMiniatura">
+          </div>
+        </div>
+
+        <div class="main-viewer-panel">
+          <div class="document" id="document">
+            <img src="" alt="Tarjeta de Salud" id="imgPrincipal" style="width:100%; height:auto; display:block;">
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div id="errorContainer" class="error-message" style="display: none;">
+      El número de expediente no es válido o no existe en el sistema.
+    </div>
+
+  </div>
+
+  <script>
+    let zoom = 1;
+
+    // --- BASE DE DATOS LOCAL TEMPORAL (Simulación de Firebase) ---
+    // Aquí puedes registrar todos los expedientes que quieras para hacer pruebas
+    const baseDeDatos = {
+      "DDRISS-TS-0000045327": {
+        estado: "En emisión",
+        imagen: "DDRISS-TS-0000045327.jpg" 
+      },
+      "DDRISS-TS-0000045328": {
+        estado: "Válido / Firmado",
+        imagen: "DDRISS-TS-0000045328.jpg"
+      }
+    };
+
+    // --- FUNCIÓN PRINCIPAL DINÁMICA ---
+    function cargarExpedienteDinamico() {
+      // 1. Obtener los parámetros de la URL de la barra de direcciones
+      const urlParams = new URLSearchParams(window.location.search);
+      const idExpediente = urlParams.get('id'); // Busca el parámetro '?id='
+
+      const txtExpediente = document.getElementById("txtExpediente");
+      const txtEstado = document.getElementById("txtEstado");
+      const imgPrincipal = document.getElementById("imgPrincipal");
+      const imgMiniatura = document.getElementById("imgMiniatura");
+      const mainViewer = document.getElementById("mainViewer");
+      const errorContainer = document.getElementById("errorContainer");
+
+      // 2. Verificar si el usuario ingresó un ID y si existe en nuestra base de datos
+      if (idExpediente && baseDeDatos[idExpediente]) {
+        const datos = baseDeDatos[idExpediente];
+
+        // 3. Inyectar los datos correspondientes en el HTML
+        txtExpediente.innerText = idExpediente;
+        txtEstado.innerText = datos.estado;
+        imgPrincipal.src = datos.imagen;
+        imgMiniatura.src = datos.imagen;
+
+        // Asegurar que el visor se muestre y el error esté oculto
+        mainViewer.style.display = "block";
+        errorContainer.style.display = "none";
+      } else {
+        // 4. Si no existe o no se pone ID, mostrar mensaje de error
+        txtExpediente.innerText = idExpediente ? idExpediente : "No especificado";
+        txtEstado.innerText = "Error";
+        mainViewer.style.display = "none"; // Oculta el visor
+        errorContainer.style.display = "block"; // Muestra el mensaje de error
+      }
+    }
+
+    // Ejecutar la función automáticamente en cuanto cargue la página
+    window.onload = cargarExpedienteDinamico;
+
+
+    // --- FUNCIONES DEL VISOR (ZOOM Y MENU) ---
+    function zoomIn(){
+      zoom += 0.1;
+      updateZoom();
+    }
+
+    function zoomOut(){
+      if(zoom > 0.5){
+        zoom -= 0.1;
+        updateZoom();
+      }
+    }
+
+    function updateZoom(){
+      const documentElement = document.getElementById("document");
+      documentElement.style.transform = `scale(${zoom})`;
+      documentElement.style.transformOrigin = "top center";
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebarLeft");
+      sidebar.classList.toggle("active");
+    }
+  </script>
+
+</body>
+</html>
