@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VerificaciÛn de Certificado</title>
+  <title>Verificacion de Certificado</title>
 
   <style>
     *{
@@ -74,7 +74,7 @@
       padding-bottom:10px;
     }
 
-    /* DISE—O EXACTO: BotÛn de las tres lÌneas (Men˙ superior) */
+    /* DISE√ëO EXACTO: Bot√≥n de las tres l√≠neas (Men√∫ superior) */
     .menu-btn{
       width: 58px;
       height: 48px;
@@ -95,7 +95,7 @@
       background: #b8b8b8;
     }
 
-    /* LÌneas internas del icono superior */
+    /* L√≠neas internas del icono superior */
     .menu-line-container {
       display: flex;
       align-items: center;
@@ -163,7 +163,7 @@
       opacity: 1;
     }
 
-    /* DISE—O EXACTO: BotÛn de miniatura inferior */
+    /* DISE√ëO EXACTO: Bot√≥n de miniatura inferior */
     .sidebar-icon-btn {
       width: 44px;
       height: 42px;
@@ -244,11 +244,11 @@
   <div class="container">
 
     <div class="title">
-      VerificaciÛn de Certificado
+      Verificacion de Certificado
     </div>
 
     <div class="info">
-      <strong>N˙mero de Expediente:</strong>
+      <strong>Numero de Expediente:</strong>
       <span id="txtExpediente">Cargando...</span>
     </div>
 
@@ -292,7 +292,7 @@
     </div>
 
     <div id="errorContainer" class="error-message" style="display: none;">
-      El n˙mero de expediente no es v·lido o no existe en el sistema.
+      El numero de expediente no es valido o no existe en el sistema.
     </div>
 
   </div>
@@ -300,24 +300,24 @@
   <script>
     let zoom = 1;
 
-    // --- BASE DE DATOS LOCAL TEMPORAL (SimulaciÛn de Firebase) ---
-    // AquÌ puedes registrar todos los expedientes que quieras para hacer pruebas
+    // --- BASE DE DATOS LOCAL TEMPORAL (Simulaci√≥n de Firebase) ---
+    // Aqu√≠ puedes registrar todos los expedientes que quieras para hacer pruebas
     const baseDeDatos = {
       "DDRISS-TS-0000045327": {
-        estado: "En emisiÛn",
+        estado: "En emisi√≥n",
         imagen: "DDRISS-TS-0000045327.jpg" 
       },
       "DDRISS-TS-0000045328": {
-        estado: "V·lido / Firmado",
+        estado: "V√°lido / Firmado",
         imagen: "DDRISS-TS-0000045328.jpg"
       }
     };
 
-    // --- FUNCI”N PRINCIPAL DIN¡MICA ---
+    // --- FUNCI√ìN PRINCIPAL DIN√ÅMICA ---
     function cargarExpedienteDinamico() {
-      // 1. Obtener los par·metros de la URL de la barra de direcciones
+      // 1. Obtener los par√°metros de la URL de la barra de direcciones
       const urlParams = new URLSearchParams(window.location.search);
-      const idExpediente = urlParams.get('id'); // Busca el par·metro '?id='
+      const idExpediente = urlParams.get('id'); // Busca el par√°metro '?id='
 
       const txtExpediente = document.getElementById("txtExpediente");
       const txtEstado = document.getElementById("txtEstado");
@@ -326,7 +326,7 @@
       const mainViewer = document.getElementById("mainViewer");
       const errorContainer = document.getElementById("errorContainer");
 
-      // 2. Verificar si el usuario ingresÛ un ID y si existe en nuestra base de datos
+      // 2. Verificar si el usuario ingres√≥ un ID y si existe en nuestra base de datos
       if (idExpediente && baseDeDatos[idExpediente]) {
         const datos = baseDeDatos[idExpediente];
 
@@ -336,7 +336,7 @@
         imgPrincipal.src = datos.imagen;
         imgMiniatura.src = datos.imagen;
 
-        // Asegurar que el visor se muestre y el error estÈ oculto
+        // Asegurar que el visor se muestre y el error est√© oculto
         mainViewer.style.display = "block";
         errorContainer.style.display = "none";
       } else {
@@ -348,7 +348,7 @@
       }
     }
 
-    // Ejecutar la funciÛn autom·ticamente en cuanto cargue la p·gina
+    // Ejecutar la funci√≥n autom√°ticamente en cuanto cargue la p√°gina
     window.onload = cargarExpedienteDinamico;
 
 
