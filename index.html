@@ -271,9 +271,8 @@ function cargarExpediente(){
 
     }
 
-    /* VALIDACIÓN */
-
-    const regex = /^DDRISS-TS-\\d+$/;
+    /* VALIDACIÓN CORREGIDA */
+    const regex = /^DDRISS-TS-\d+$/;
 
     if(!regex.test(idExpediente)){
 
@@ -373,4 +372,4 @@ window.onload = cargarExpediente;
 </script>
 
 </body>
-              </html>
+</html>
