@@ -65,7 +65,7 @@ body{
 }
 
 /* ==========================================
-   PANTALLA DE CARGA (Fase Intermedia)
+   PANTALLA DE CARGA 
    ========================================== */
 .loading-screen {
     display: flex;
@@ -115,7 +115,7 @@ body{
     margin-top: 10px;
 }
 
-/* TOOLBAR */
+/* NAVBAR / TOOLBAR */
 .toolbar{
     background:#ffffff;
     display:flex;
@@ -132,9 +132,7 @@ body{
     gap: 15px;
 }
 
-/* ==========================================
-   BOTÓN NUEVO: 3 RAYITAS CON 3 PUNTITOS DELANTE
-   ========================================== */
+/* Botón de 3 Rayitas con 3 Puntitos */
 .menu-icon-custom {
     display: flex;
     flex-direction: column;
@@ -148,9 +146,7 @@ body{
     transition: background 0.2s;
 }
 
-.menu-icon-custom:hover {
-    background: #f5f5f5;
-}
+.menu-icon-custom:hover { background: #f5f5f5; }
 
 .menu-item-row {
     display: flex;
@@ -158,7 +154,6 @@ body{
     gap: 5px;
 }
 
-/* Los pequeños puntitos delante de las líneas */
 .dot-indicator {
     width: 3px;
     height: 3px;
@@ -166,7 +161,6 @@ body{
     border-radius: 50%;
 }
 
-/* Las líneas horizontales del menú */
 .menu-line {
     width: 16px;
     height: 2px;
@@ -174,31 +168,31 @@ body{
     border-radius: 1px;
 }
 
-/* CONTENEDOR DE TRABAJO (Efecto Push) */
+/* ==========================================
+   CONTENEDOR CON EMPUJE REAL ACTIVO
+   ========================================== */
 .workspace-container {
     display: flex;
     width: 100%;
-    background:#f1f3f4; 
+    background: #f1f3f4; 
     min-height: 70vh;
-    position: relative;
     overflow: hidden;
 }
 
-/* PANEL LATERAL DE MINIATURAS (Ajustado dinámicamente) */
+/* PANEL LATERAL (Ancho fijo controlado por transiciones de Flexbox) */
 .sidebar {
     width: 0;
     background: #ffffff;
-    border-right: 0 solid #dcdcdc;
     overflow: hidden;
-    transition: width 0.25s ease, border-right 0.25s ease;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 20px;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Evita que el contenedor colapse internamente */
 }
 
-/* Clase activa para abrir miniaturas con empuje real */
+/* Cuando se abre el panel lateral toma dimensión física e interactiva */
 .sidebar.open { 
     width: 140px; 
     border-right: 1px solid #dcdcdc;
@@ -213,34 +207,36 @@ body{
 }
 .thumbnail-img { width: 100%; height: auto; display: block; }
 
-/* CONTENEDOR PDF QUE SE ADAPTA AL EMPUJE */
+/* CONTENEDOR PRINCIPAL - Ocupa el espacio restante y reacciona al empuje */
 .pdf-container {
     flex-grow: 1;
     display: flex;
     justify-content: center;
-    padding: 20px 10px;
-    overflow: auto;
-    transition: all 0.25s ease;
+    align-items: flex-start;
+    padding: 20px 15px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    transition: margin-left 0.25s ease; /* Transición sincronizada */
 }
 
+/* LA HOJA: Bloquea deformación y se redimensiona limpiamente con el Zoom */
 .pdf-viewer {
-    width: 100%;
+    width: 90%; /* Ancho dinámico inicial basado en el contenedor base */
     max-width: 800px;
     height: auto;
     border: 1px solid #dcdcdc;
     background: white;
     box-shadow: 0px 1px 4px rgba(0,0,0,0.1);
-    transform-origin: top center;
-    transition: transform .2s ease;
     display: block;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Garantiza que mantenga proporciones intactas al empujar */
+    transition: width 0.2s ease;
 }
 
-/* CONTROLES DE ZOOM ADICIONALES */
+/* CONTROLES DE NAVBAR */
 .toolbar-center {
-    display:flex;
+    display: flex;
     align-items: center;
-    gap:16px;
+    gap: 16px;
 }
 
 .zoom-btn {
@@ -250,6 +246,7 @@ body{
     font-size: 22px;
     cursor: pointer;
     padding: 0 6px;
+    outline: none;
 }
 
 /* MENSAJE DE ERROR */
@@ -312,7 +309,8 @@ body{
                 <button class="zoom-btn" onclick="zoomOut()">−</button>
                 <button class="zoom-btn" onclick="zoomIn()">+</button>
             </div>
-            <div></div> </div>
+            <div></div> 
+        </div>
 
         <div class="workspace-container">
             <div class="sidebar" id="sidebarPanel">
@@ -334,7 +332,8 @@ body{
 </div>
 
 <script>
-let zoom = 1;
+// Manejador del zoom mediante porcentaje nativo de ancho para no romper Flexbox
+let currentZoomPercent = 90; 
 
 function cargarExpediente(){
     const params = new URLSearchParams(window.location.search);
@@ -372,7 +371,7 @@ function cargarExpediente(){
             pdfViewer.src = rutaImagen;
             pdfThumbnail.src = rutaImagen;
             
-            // Simulación de 10 segundos antes de mostrar la UI final
+            // Espera de 10 segundos exacta del video
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
                 viewer.style.display = 'block';
@@ -388,26 +387,29 @@ function cargarExpediente(){
     });
 }
 
-// Control de apertura lateral por desplazamiento puro (Push animation)
+// Alternar panel lateral con redimensión física de elementos (Desplazamiento real)
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebarPanel');
     sidebar.classList.toggle('open');
 }
 
 function zoomIn(){
-    zoom += 0.1;
-    updateZoom();
+    if(currentZoomPercent < 150) {
+        currentZoomPercent += 10;
+        updateZoom();
+    }
 }
 
 function zoomOut(){
-    if(zoom > 0.5){
-        zoom -= 0.1;
+    if(currentZoomPercent > 40){
+        currentZoomPercent -= 10;
         updateZoom();
     }
 }
 
 function updateZoom(){
-    document.getElementById('pdfViewer').style.transform = `scale(${zoom})`;
+    // Modifica directamente el ancho físico para que interactúe de forma correcta con el panel lateral
+    document.getElementById('pdfViewer').style.width = currentZoomPercent + '%';
 }
 
 function mostrarError(mensaje){
