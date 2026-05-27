@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simplificación de Certificado</title>
+<title>Verificación de Certificado</title>
 
 <style>
 *{
@@ -64,7 +64,52 @@ body{
     font-weight: 700;
 }
 
-/* VISOR DE EXPEDIENTE INTEGRADO */
+/* ==========================================
+   PANTALLA DE CARGA (Simulación del Video)
+   ========================================== */
+.loading-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 60px;
+    min-height: 60vh;
+    background: #f1f3f4;
+    border-top: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+.loading-text {
+    font-size: 18px;
+    color: #5f6368;
+    margin-bottom: 30px;
+}
+
+/* Animación de los 3 puntos parpadeantes del video */
+.dots-container {
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 14px;
+    height: 14px;
+    background-color: #ffffff; /* Puntos blancos sobre fondo gris */
+    border-radius: 50%;
+    animation: blink 1.4s infinite both;
+}
+
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+    0%, 80%, 100% { opacity: 0.2; }
+    40% { opacity: 1; }
+}
+
+/* ==========================================
+   VISOR DE EXPEDIENTE (Oculto al inicio)
+   ========================================== */
 .viewer{
     background:#ffffff;
     border-top: 1px solid #e0e0e0;
@@ -108,7 +153,6 @@ body{
     background-color: #555555;
 }
 
-/* Paginación de escritorio */
 .pagination-controls {
     display: flex;
     align-items: center;
@@ -181,7 +225,7 @@ body{
 .action-btn:hover { background: #f0f0f0; }
 .action-btn svg { width: 18px; height: 18px; fill: #5f6368; }
 
-/* CONTENEDOR DE TRABAJO (Panel + Documento) */
+/* CONTENEDOR DE TRABAJO */
 .workspace-container {
     display: flex;
     width: 100%;
@@ -202,12 +246,10 @@ body{
     flex-direction: column;
     align-items: center;
     padding-top: 15px;
-    flex-shrink: 0; /* Evita que el panel se deforme */
+    flex-shrink: 0;
 }
 
-.sidebar.open {
-    width: 160px;
-}
+.sidebar.open { width: 160px; }
 
 .sidebar-icon-box {
     width: 32px;
@@ -232,25 +274,24 @@ body{
 
 /* CONTENEDOR DE LA IMAGEN PRINCIPAL */
 .pdf-container {
-    flex-grow: 1; /* Permite desplazarse a la derecha de forma fluida */
+    flex-grow: 1;
     display: flex;
     justify-content: center;
     padding: 15px 10px;
     overflow: auto;
-    transition: padding 0.3s ease;
 }
 
 .pdf-viewer {
     width: 100%;
     max-width: 850px;
-    height: auto; /* Asegura proporciones intactas sin estrecharse */
+    height: auto;
     border: 1px solid #dcdcdc;
     background: white;
     box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
     transform-origin: top center;
     transition: transform .2s ease;
     display: block;
-    flex-shrink: 0; /* Bloquea cualquier deformación por compresión */
+    flex-shrink: 0;
 }
 
 /* MENSAJE DE ERROR */
@@ -269,7 +310,7 @@ body{
     .header-logo { max-width: 260px; }
     .title { font-size:28px; }
     .info { font-size:20px; }
-    .pagination-controls, .zoom-select, .toolbar-right { display: none; } /* Ocultar extras en móviles muy pequeños */
+    .pagination-controls, .zoom-select, .toolbar-right { display: none; }
     .sidebar.open { width: 130px; }
 }
 </style>
@@ -298,8 +339,16 @@ body{
         </div>
     </div>
 
-    <div class="viewer" id="viewer">
-        
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-text">Cargando datos del documento</div>
+        <div class="dots-container">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <div class="viewer" id="viewer" style="display:none;">
         <div class="toolbar">
             <div class="toolbar-left">
                 <div class="menu-icon" id="btnMenu" onclick="toggleSidebar()">
@@ -339,7 +388,6 @@ body{
         </div>
 
         <div class="workspace-container">
-            
             <div class="sidebar" id="sidebarPanel">
                 <div class="sidebar-icon-box">
                     <svg viewBox="0 0 24 24">
@@ -354,7 +402,6 @@ body{
             <div class="pdf-container">
                 <img id="pdfViewer" class="pdf-viewer" src="" alt="Documento de Expediente">
             </div>
-
         </div>
     </div>
 
@@ -375,9 +422,12 @@ function cargarExpediente(){
     const txtEstado = document.getElementById('txtEstado');
     const pdfViewer = document.getElementById('pdfViewer');
     const pdfThumbnail = document.getElementById('pdfThumbnail');
-    const viewer = document.getElementById('viewer');
     const errorContainer = document.getElementById('errorContainer');
     const btnDownload = document.getElementById('btnDownload');
+    
+    // Elementos de las pantallas
+    const loadingScreen = document.getElementById('loadingScreen');
+    const viewer = document.getElementById('viewer');
 
     if(!idExpediente){
         mostrarError('No se especificó ningún número de expediente.');
@@ -402,7 +452,6 @@ function cargarExpediente(){
             pdfViewer.src = rutaImagen;
             pdfThumbnail.src = rutaImagen;
             
-            // Configurar acción de descarga nativa para el botón del cloud
             btnDownload.onclick = () => {
                 const link = document.createElement('a');
                 link.href = rutaImagen;
@@ -410,8 +459,16 @@ function cargarExpediente(){
                 link.click();
             };
 
-            viewer.style.display = 'block';
-            errorContainer.style.display = 'none';
+            /* ========================================================
+               TEMPORIZADOR DE 10 SEGUNDOS (10000 milisegundos)
+               Mantiene la pantalla de carga antes de revelar el visor
+               ======================================================== */
+            setTimeout(() => {
+                loadingScreen.style.display = 'none'; // Esconde los puntos
+                viewer.style.display = 'block';       // Muestra el documento
+                errorContainer.style.display = 'none';
+            }, 10000);
+
         }else{
             mostrarError('El expediente solicitado no fue encontrado en el servidor.');
         }
@@ -448,16 +505,21 @@ function selectZoom(val) {
 
 function updateZoom(){
     document.getElementById('pdfViewer').style.transform = `scale(${zoom})`;
-    // Sincroniza dinámicamente el selector de texto
-    const pct = Math.round(zoom * 100) + '%';
     const select = document.getElementById('zoomSelect');
     
-    // Añade el porcentaje temporal si se usa con botones + o -
     if(![...select.options].some(o => o.value == zoom.toFixed(2))) {
         select.value = "1.0"; 
     } else {
         select.value = zoom.toFixed(2);
     }
+}
+
+function mostrarError(mensaje){
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('viewer').style.display = 'none';
+    document.getElementById('errorContainer').style.display = 'block';
+    document.getElementById('errorContainer').innerText = mensaje;
+    document.getElementById('txtEstado').innerText = 'Error';
 }
 
 window.onload = cargarExpediente;
