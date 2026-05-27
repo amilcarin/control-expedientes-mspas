@@ -3,184 +3,183 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Verificación de Certificado</title>
 
 <style>
-
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 body{
-    background:#f2f2f2;
+    background:#ffffff;
     color:#222;
 }
 
-/* HEADER */
-
+/* HEADER - Idéntico al oficial */
 .header{
-    background:#69aee8;
-    padding:18px 20px;
+    background:#5cb1ff;
+    padding:15px 20px;
     display:flex;
-    justify-content:center;
+    justify-content:flex-start;
     align-items:center;
-    box-shadow:0 2px 8px rgba(0,0,0,.15);
 }
 
 .header-logo{
     width:100%;
-    max-width:420px;
+    max-width:340px;
+    height:auto;
 }
 
-/* CONTENIDO */
-
+/* CONTENIDO PRINCIPAL */
 .container{
-    max-width:1200px;
+    max-width:100%;
     margin:auto;
-    padding:30px 20px;
+    padding:25px 20px;
 }
 
 .title{
-    font-size:48px;
-    font-weight:bold;
-    margin-bottom:25px;
+    font-size:32px;
+    font-weight:700;
+    color:#212529;
+    margin-bottom:15px;
+    letter-spacing: -0.5px;
 }
 
 .info-box{
-    background:white;
-    border-radius:10px;
-    padding:20px;
-    margin-bottom:25px;
-    box-shadow:0 3px 10px rgba(0,0,0,.08);
+    background:transparent;
+    margin-bottom:20px;
 }
 
 .info{
-    font-size:28px;
-    margin-bottom:15px;
+    font-size:24px;
+    margin-bottom:12px;
+    color:#212529;
 }
 
 .info strong{
-    color:#0f4c81;
+    font-weight: 700;
 }
 
-/* VISOR */
+.info span{
+    font-weight: 400;
+    color:#212529;
+}
 
+/* VISOR DE EXPEDIENTE INTEGRADO */
 .viewer{
-    background:#ececec;
-    border-radius:10px;
-    overflow:hidden;
-    box-shadow:0 5px 15px rgba(0,0,0,.15);
+    background:#ffffff;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 10px;
 }
 
-/* TOOLBAR */
-
+/* TOOLBAR DEL VISOR (Menú de tres líneas, - , +) */
 .toolbar{
-    background:white;
+    background:#ffffff;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:15px 20px;
-    border-bottom:1px solid #ddd;
+    padding:10px 5px;
+    border-bottom:1px solid #e0e0e0;
 }
 
-.status{
-    background:#dff0d8;
-    color:#2e7d32;
-    padding:8px 18px;
-    border-radius:30px;
-    font-weight:bold;
-    font-size:16px;
+.menu-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.menu-icon span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background-color: #555555;
 }
 
 .zoom-controls{
     display:flex;
-    gap:10px;
+    align-items: center;
+    gap:20px;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .zoom-btn{
-    width:50px;
-    height:50px;
-    border:none;
-    background:#6b5ca5;
-    color:white;
-    font-size:28px;
-    border-radius:8px;
-    cursor:pointer;
-    transition:.2s;
+    border: none;
+    background: transparent;
+    color: #555555;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 10px;
+    font-weight: 300;
 }
 
-.zoom-btn:hover{
-    transform:scale(1.05);
-}
-
-/* PDF */
-
+/* CONTENEDOR DEL PDF DEL EXPEDIENTE */
 .pdf-container{
     width:100%;
-    height:85vh;
-    overflow:auto;
-    background:#bdbdbd;
+    background:#f1f3f4; /* Gris de fondo de visores oficiales */
     display:flex;
     justify-content:center;
-    padding:20px;
+    padding:15px 10px;
+    min-height: 70vh;
+    overflow-x: auto;
 }
 
 .pdf-viewer{
     width:100%;
-    max-width:900px;
-    height:100%;
-    border:none;
+    max-width:850px;
+    height: 75vh;
+    border: 1px solid #dcdcdc;
     background:white;
-    transform-origin:top center;
-    transition:transform .2s ease;
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
+    transform-origin: top center;
+    transition: transform .2s ease;
 }
 
-/* ERROR */
-
+/* MENSAJE DE ERROR */
 .error-message{
-    background:white;
-    padding:40px;
-    border-radius:10px;
+    background:#f8d7da;
+    padding:20px;
+    border-radius:5px;
     text-align:center;
-    font-size:24px;
-    color:#d32f2f;
-    box-shadow:0 5px 15px rgba(0,0,0,.1);
+    font-size:18px;
+    color:#721c24;
+    border: 1px solid #f5c6cb;
+    margin-top: 20px;
 }
 
-/* RESPONSIVE */
-
+/* AJUSTES RESPONSIVOS (Móviles exactos como tu captura) */
 @media(max-width:768px){
-
-    .title{
-        font-size:30px;
+    .header {
+        padding: 12px 15px;
     }
-
+    .header-logo {
+        max-width: 260px;
+    }
+    .title{
+        font-size:28px;
+    }
     .info{
         font-size:20px;
     }
-
-    .toolbar{
-        flex-direction:column;
-        gap:15px;
+    .pdf-container {
+        padding: 8px 5px;
     }
-
-    .pdf-container{
-        height:75vh;
+    .pdf-viewer {
+        height: 65vh;
     }
-
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="header">
-    <img src="logo.png" class="header-logo">
+    <img src="logo.png" class="header-logo" alt="Ministerio de Salud Pública y Asistencia Social">
 </div>
 
 <div class="container">
@@ -190,185 +189,118 @@ body{
     </div>
 
     <div class="info-box">
-
         <div class="info">
             <strong>Número de Expediente:</strong>
             <span id="txtExpediente">Cargando...</span>
         </div>
-
         <div class="info">
             <strong>Estado:</strong>
             <span id="txtEstado">Validando...</span>
         </div>
-
     </div>
 
     <div class="viewer" id="viewer">
-
         <div class="toolbar">
-
-            <div class="status" id="statusBadge">
-                Documento válido
+            <div class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
-
+            
             <div class="zoom-controls">
                 <button class="zoom-btn" onclick="zoomOut()">−</button>
                 <button class="zoom-btn" onclick="zoomIn()">+</button>
             </div>
-
         </div>
 
         <div class="pdf-container">
-
             <iframe
                 id="pdfViewer"
                 class="pdf-viewer">
             </iframe>
-
         </div>
-
     </div>
 
-    <div
-        class="error-message"
-        id="errorContainer"
-        style="display:none;">
-
+    <div class="error-message" id="errorContainer" style="display:none;">
         El expediente no existe o no está disponible.
-
     </div>
 
 </div>
 
 <script>
-
 let zoom = 1;
 
-/* CARGAR EXPEDIENTE */
-
 function cargarExpediente(){
-
     const params = new URLSearchParams(window.location.search);
-
     const idExpediente = params.get('id');
 
     const txtExpediente = document.getElementById('txtExpediente');
-
     const txtEstado = document.getElementById('txtEstado');
-
     const pdfViewer = document.getElementById('pdfViewer');
-
     const viewer = document.getElementById('viewer');
-
     const errorContainer = document.getElementById('errorContainer');
 
-    const statusBadge = document.getElementById('statusBadge');
-
     if(!idExpediente){
-
-        mostrarError('No se especificó expediente');
+        mostrarError('No se especificó ningún número de expediente.');
         return;
-
     }
 
-    /* VALIDACIÓN CORREGIDA */
+    /* Expresión regular corregida para admitir ceros a la izquierda */
     const regex = /^DDRISS-TS-\d+$/;
 
     if(!regex.test(idExpediente)){
-
-        mostrarError('Formato inválido');
+        mostrarError('El formato del número de expediente es inválido.');
         return;
-
     }
 
     txtExpediente.innerText = idExpediente;
+    txtEstado.innerText = 'En emisión';
 
-    txtEstado.innerText = 'Válido / Firmado';
-
-    /* RUTA PDF */
-
+    /* Ruta interna del PDF almacenado en tu carpeta de GitHub */
     const rutaPDF = `expedientes/${idExpediente}.pdf`;
 
-    /* VERIFICAR SI EXISTE */
-
+    /* Petición interna para cargar el PDF dentro del iframe de forma segura */
     fetch(rutaPDF)
     .then(response => {
-
         if(response.ok){
-
             pdfViewer.src = rutaPDF;
-
             viewer.style.display = 'block';
-
             errorContainer.style.display = 'none';
-
         }else{
-
-            mostrarError('Expediente no encontrado');
-
+            mostrarError('El expediente solicitado no fue encontrado en el servidor.');
         }
-
     })
     .catch(() => {
-
-        mostrarError('Error al cargar documento');
-
+        mostrarError('Ocurrió un error al intentar consultar el documento.');
     });
-
 }
-
-/* ERROR */
 
 function mostrarError(mensaje){
-
+    document.getElementById('viewer').style.style.opacity = '0.3'; // Opcional: difumina si hay error
     document.getElementById('viewer').style.display = 'none';
-
     document.getElementById('errorContainer').style.display = 'block';
-
     document.getElementById('errorContainer').innerText = mensaje;
-
     document.getElementById('txtEstado').innerText = 'Error';
-
-    document.getElementById('statusBadge').style.background = '#ffcdd2';
-
-    document.getElementById('statusBadge').style.color = '#b71c1c';
-
-    document.getElementById('statusBadge').innerText = 'Documento inválido';
-
 }
 
-/* ZOOM */
-
+/* Controles de escala exactos */
 function zoomIn(){
-
     zoom += 0.1;
-
     updateZoom();
-
 }
 
 function zoomOut(){
-
-    if(zoom > 0.5){
-
+    if(zoom > 0.6){
         zoom -= 0.1;
-
         updateZoom();
-
     }
-
 }
 
 function updateZoom(){
-
     document.getElementById('pdfViewer').style.transform = `scale(${zoom})`;
-
 }
 
-/* INICIAR */
-
 window.onload = cargarExpediente;
-
 </script>
 
 </body>
