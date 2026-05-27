@@ -63,11 +63,6 @@ body{
     font-weight: 700;
 }
 
-.info span{
-    font-weight: 400;
-    color:#212529;
-}
-
 /* VISOR DE EXPEDIENTE INTEGRADO */
 .viewer{
     background:#ffffff;
@@ -75,7 +70,7 @@ body{
     margin-top: 10px;
 }
 
-/* TOOLBAR DEL VISOR (Menú de tres líneas, - , +) */
+/* TOOLBAR DEL VISOR */
 .toolbar{
     background:#ffffff;
     display:flex;
@@ -118,26 +113,27 @@ body{
     font-weight: 300;
 }
 
-/* CONTENEDOR DEL PDF DEL EXPEDIENTE */
+/* CONTENEDOR DE LA IMAGEN DEL EXPEDIENTE */
 .pdf-container{
     width:100%;
-    background:#f1f3f4; /* Gris de fondo de visores oficiales */
+    background:#f1f3f4; /* Gris de fondo oficial */
     display:flex;
     justify-content:center;
     padding:15px 10px;
-    min-height: 70vh;
-    overflow-x: auto;
+    min-height: 60vh;
+    overflow: auto; /* Permite desplazarse si hay zoom */
 }
 
 .pdf-viewer{
     width:100%;
     max-width:850px;
-    height: 75vh;
+    height: auto; /* Ajuste automático vertical para imágenes */
     border: 1px solid #dcdcdc;
     background:white;
     box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
     transform-origin: top center;
     transition: transform .2s ease;
+    display: block;
 }
 
 /* MENSAJE DE ERROR */
@@ -152,26 +148,12 @@ body{
     margin-top: 20px;
 }
 
-/* AJUSTES RESPONSIVOS (Móviles exactos como tu captura) */
 @media(max-width:768px){
-    .header {
-        padding: 12px 15px;
-    }
-    .header-logo {
-        max-width: 260px;
-    }
-    .title{
-        font-size:28px;
-    }
-    .info{
-        font-size:20px;
-    }
-    .pdf-container {
-        padding: 8px 5px;
-    }
-    .pdf-viewer {
-        height: 65vh;
-    }
+    .header { padding: 12px 15px; }
+    .header-logo { max-width: 260px; }
+    .title{ font-size:28px; }
+    .info{ font-size:20px; }
+    .pdf-container { padding: 8px 5px; }
 }
 </style>
 </head>
@@ -214,10 +196,11 @@ body{
         </div>
 
         <div class="pdf-container">
-            <iframe
-                id="pdfViewer"
-                class="pdf-viewer">
-            </iframe>
+            <img 
+                id="pdfViewer" 
+                class="pdf-viewer" 
+                src="" 
+                alt="Documento de Expediente">
         </div>
     </div>
 
@@ -245,7 +228,6 @@ function cargarExpediente(){
         return;
     }
 
-    /* Expresión regular corregida para admitir ceros a la izquierda */
     const regex = /^DDRISS-TS-\d+$/;
 
     if(!regex.test(idExpediente)){
@@ -256,14 +238,14 @@ function cargarExpediente(){
     txtExpediente.innerText = idExpediente;
     txtEstado.innerText = 'En emisión';
 
-    /* Ruta interna del PDF almacenado en tu carpeta de GitHub */
-    const rutaPDF = `expedientes/${idExpediente}.pdf`;
+    /* CAMBIADO A .JPG PARA CARGA DIRECTA AUTOMÁTICA */
+    const rutaImagen = `expedientes/${idExpediente}.jpg`;
 
-    /* Petición interna para cargar el PDF dentro del iframe de forma segura */
-    fetch(rutaPDF)
+    /* Validación de existencia usando fetch antes de renderizar */
+    fetch(rutaImagen)
     .then(response => {
         if(response.ok){
-            pdfViewer.src = rutaPDF;
+            pdfViewer.src = rutaImagen;
             viewer.style.display = 'block';
             errorContainer.style.display = 'none';
         }else{
@@ -276,22 +258,20 @@ function cargarExpediente(){
 }
 
 function mostrarError(mensaje){
-    document.getElementById('viewer').style.style.opacity = '0.3'; // Opcional: difumina si hay error
     document.getElementById('viewer').style.display = 'none';
     document.getElementById('errorContainer').style.display = 'block';
     document.getElementById('errorContainer').innerText = mensaje;
     document.getElementById('txtEstado').innerText = 'Error';
 }
 
-/* Controles de escala exactos */
 function zoomIn(){
-    zoom += 0.1;
+    zoom += 0.15;
     updateZoom();
 }
 
 function zoomOut(){
     if(zoom > 0.6){
-        zoom -= 0.1;
+        zoom -= 0.15;
         updateZoom();
     }
 }
