@@ -353,7 +353,7 @@ function cargarExpediente(){
         return;
     }
 
-    const regex = /^DDRISS-CMA-\d+$/;
+    const regex = /^DDRISS-(CMA|TS)-\d+$/;
 
     if(!regex.test(idExpediente)){
         mostrarError('El formato del número de expediente es inválido.');
